@@ -55,7 +55,7 @@ public class RenameMeResource {
             movieDTOS.add(movieDTO);
         }
 
-        return new Gson().toJson(movieDTOS);
+        return GSON.toJson(movieDTOS);
     }
 
 }
