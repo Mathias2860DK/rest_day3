@@ -1,9 +1,13 @@
 package rest;
 
+import dtos.MovieDTO;
 import entities.Movie;
+import io.restassured.http.ContentType;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
 import io.restassured.parsing.Parser;
 import java.net.URI;
 import javax.persistence.EntityManager;
@@ -13,19 +17,19 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import static org.hamcrest.Matchers.equalTo;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
-@Disabled
+
 public class RenameMeResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static Movie m1, m2;
+    private static Movie m1, m2, m3;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -63,13 +67,15 @@ public class RenameMeResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        m1 = new Movie(2000, "Fist Movie", new String[]{"Actor1", "Actor2"});
+        m1 = new Movie(2000, "First Movie", new String[]{"Actor1", "Actor2"});
         m2 = new Movie(2010, "Second Movie", new String[]{"Actor1", "Actor2"});
+        m3 = new Movie(2001,"Terkel i knibe",new String[]{"Anden"});
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Movie.deleteAllRows").executeUpdate();
             em.persist(m1);
             em.persist(m2);
+            em.persist(m3);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -79,27 +85,68 @@ public class RenameMeResourceTest {
     @Test
     public void testServerIsUp() {
         System.out.println("Testing is server UP");
-        given().when().get("/xxx").then().statusCode(200);
+        given().when().get("/movie").then().statusCode(200);
     }
 
-    //This test assumes the database contains two rows
+    //Create a test that verifies that the server is up (similar to the “Hello World” response)
     @Test
     public void testDummyMsg() throws Exception {
         given()
                 .contentType("application/json")
-                .get("/xxx/").then()
+                .get("/movie/").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", equalTo("Hello World"));
     }
 
     @Test
+    /*
+    Create a test for the endpoint: api/movie/count
+     (expected result, depends on how many movies you created before each test ).
+     */
     public void testCount() throws Exception {
         given()
                 .contentType("application/json")
-                .get("/xxx/count").then()
+                .get("/movie/count").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("count", equalTo(2));
+                .body("count", equalTo(3));
     }
+
+    @Test
+    /*
+    Create a test for the endpoint api/movie/all and assert that the response includes
+     the right amount of movies (what you have setup for the test)
+      and preferably also that you got the expected movies.
+
+     */
+    public void testGetAllMovies(){
+        //endpoint: api/movie/all
+        //m1 = new Movie(2000, "Fist Movie", new String[]{"Actor1", "Actor2"});
+        given().when().get("/movie/all").then().assertThat().body("title[0]",equalTo("Second Movie"));
+    }
+    @Test
+    public void testGetAllMoviesHasItem(){
+        //endpoint: api/movie/all
+       //TODO: Hvorfor virker denne ikke=
+        //given().when().get("/movie/all").then().assertThat().body("actors",hasItem("Anden"));
+    }
+   @Test
+    public void testGetAllMoviesStatusCode200(){
+        given().when().get("/movie/all").then().assertThat().statusCode(200);
+    }
+    @Test
+    public void testGetAllMoviesContentType(){
+        given().when().get("/movie/all").then().assertThat().contentType(ContentType.JSON);
+    }
+    @Test
+    public void testGetAlleMoviesLogRequestDetails(){
+        given().log().all().when().get("/movie/all").then().log().body();
+    }
+
+
+
+
+
+
 }

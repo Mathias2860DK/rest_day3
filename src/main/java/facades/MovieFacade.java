@@ -55,7 +55,15 @@ public class MovieFacade {
         return new MovieDTO(em.find(Movie.class, id));
     }
     
-
+public long getMovieCount(){
+        EntityManager em = emf.createEntityManager();
+        try {
+            long movieCount = (long)em.createQuery("SELECT COUNT(m) FROM Movie m").getSingleResult();
+            return movieCount;
+        } finally {
+            em.close();
+        }
+}
     
     public List<MovieDTO> getAll(){
         EntityManager em = emf.createEntityManager();

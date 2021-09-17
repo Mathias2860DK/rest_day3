@@ -34,18 +34,17 @@ public class RenameMeResource {
     @Path("count")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public String getRenameMeCount() {
+    public String getMovieCount() {
        
-       // long count = FACADE.getRenameMeCount();
+        long count = FACADE.getMovieCount();
         //System.out.println("--------------->"+count);
-        return "{\"count\":"+10+"}";  //Done manually so no need for a DTO
+        return "{\"count\":"+count+"}";  //Done manually so no need for a DTO
     }
 
     @Path("all")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public String getAllEmployees() {
-        Populator.populate();
+    public String getAllMovies() {
         EntityManager em = EMF.createEntityManager();
         List<Movie> movies = em.createNamedQuery("Movie.getAll").getResultList();
 
@@ -56,6 +55,14 @@ public class RenameMeResource {
         }
 
         return GSON.toJson(movieDTOS);
+    }
+
+    @Path("populate")
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public String populate() {
+        Populator.populate();
+        return "Congrats. Movies has been inserted";
     }
 
 }

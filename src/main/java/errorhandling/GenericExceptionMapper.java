@@ -5,6 +5,7 @@
  */
 package errorhandling;
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.logging.Level;
@@ -24,7 +25,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class GenericExceptionMapper implements ExceptionMapper<Throwable>  {
-  static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     @Context
     ServletContext context;
 
