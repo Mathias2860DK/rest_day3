@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
 
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) --> resets DB?
 public class RenameMeResourceTest {
 
     private static final int SERVER_PORT = 7777;
@@ -144,9 +145,20 @@ public class RenameMeResourceTest {
         given().log().all().when().get("/movie/all").then().log().body();
     }
 
+@Test
+    /*
+    Create a test for an endpoint: api/movie/title/{title}.
+     Use a name you know exists, and (for red students)
+      also try with a name that does not exist (obviously this requires that you know what
+       you return in such a case)
+     */
+public void testGetMovieTitle(){
+    given().log().all().when().get("/movie/title").then().log().body();
+}
 
 
-
-
-
+    @Test
+    void getMovieById() { //TODO: RESET AUTO GENERATED ID??
+    //given().given().when().get("/movie/id/2").then().assertThat().body("id",equalTo("3L"));
+    }
 }

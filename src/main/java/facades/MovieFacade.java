@@ -2,9 +2,12 @@ package facades;
 
 import dtos.MovieDTO;
 import entities.Movie;
+
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import utils.EMF_Creator;
 
@@ -50,7 +53,7 @@ public class MovieFacade {
         }
         return new MovieDTO(movie);
     }
-    public MovieDTO getById(long id){
+    public MovieDTO getMovieDtoById(long id){
         EntityManager em = emf.createEntityManager();
         return new MovieDTO(em.find(Movie.class, id));
     }
@@ -69,6 +72,13 @@ public long getMovieCount(){
         EntityManager em = emf.createEntityManager();
         TypedQuery<Movie> query = em.createQuery("SELECT r FROM Movie r", Movie.class);
         List<Movie> movies = query.getResultList();
+        return MovieDTO.getDtos(movies);
+    }
+
+    public List<MovieDTO> getMovieDTOByTitle(String title){
+        EntityManager em = emf.createEntityManager();
+        List<Movie> movies = em.createNamedQuery("Movie.getByName",Movie.class).setParameter("title",title).getResultList();
+
         return MovieDTO.getDtos(movies);
     }
     

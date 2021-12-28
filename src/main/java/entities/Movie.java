@@ -25,6 +25,8 @@ public class Movie implements Serializable {
         this.actors = actors;
     }
 
+
+
     public Movie() {
     }
 
